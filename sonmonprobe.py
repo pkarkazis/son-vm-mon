@@ -25,7 +25,6 @@ def init():
     prometh_server = conf.ConfigSectionMap("Prometheus")['server_url']
     node_name = conf.ConfigSectionMap("vm_node")['node_name']
     logger = logging.getLogger('dataCollector')
-    #hdlr = logging.FileHandler('dataCollector.log', mode='w')
     hdlr = RotatingFileHandler('dataCollector.log', maxBytes=10000, backupCount=1)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     hdlr.setFormatter(formatter)
@@ -36,16 +35,15 @@ def init():
     if vm_id == None:
         vm_id = node_name
     print vm_id
-    logger.info('SP Data Collector')
+    logger.info('VM Data Collector')
     logger.info('Promth P/W Server '+prometh_server)
     logger.info('Monitoring Node '+node_name)
 
 def postNode(node_,type_, data_):
-    #print data
+    
     url = prometh_server+"/job/"+type_+"/instance/"+node_
-    #print url
     logger.info('Post on: \n'+url)
-    #logger.info('Post ports metrics: \n'+data_)
+   
     try: 
         req = urllib2.Request(url)
         req.add_header('Content-Type','text/html')
@@ -67,7 +65,6 @@ def getMetaData():
         response=urllib2.urlopen(req, timeout = 3)
         code = response.code
         data = json.loads(response.read())
-        #print json.dumps(data)
         return data["uuid"]
     
     except urllib2.HTTPError, e:
